@@ -31,3 +31,48 @@ After reviewing the code provided, here are some thoughts:
 7. To enhance scalability and maintainability, it is essential to break down the code into smaller, cohesive modules or classes. Splitting the code into smaller pieces improves readability, testability, and the ability to manage and modify specific functionalities independently.
 
 8. Utilizing dependency injection can improve the testability of the codebase. By injecting dependencies instead of directly instantiating them within classes, it becomes easier to mock dependencies during testing, facilitating isolated unit testing and reducing coupling between components.
+
+## Refactor
+1. `BookingController.php`:
+    - In the index method, the condition $request->has('user_id') has been replaced with $request->has('user_id') to check if the user_id parameter exists.
+      The condition $user->hasAnyRole([Config::get('roles.admin_role_id'), Config::get('roles.superadmin_role_id')]) has been replaced with $user->can('view-all-jobs') to check if the user has the required permission.
+      In the getHistory method, the condition $user->can('view-users-jobs-history') has been added to ensure that the user has the permission to view user job history.
+
+    - The $request->__authenticatedUser has been replaced with $request->user() to access the authenticated user.
+      Response Handling:
+
+    - The return response($response); has been replaced with return response()->json($response); to return a JSON response.
+      In the show method, a try-catch block has been added to catch the ModelNotFoundException and return a 404 response if the job is not found.
+      In the resendSMSNotifications method, the response has been changed to abort(500, 'Something Went Wrong.') instead of response(['success' => $e->getMessage()]) to indicate a server error.
+
+    - The controller's constructor has been updated to inject the BookingRepository dependency.
+
+2. `BookingRepository.php`:
+   - Refactored Code, applied SOLID, DRY, KISS etc. Principle
+   - BookingRepository Voilting the Single Responsibilty Principle
+   - We Splitted Code intor Multiple Sub Classes moved Controller code to new Controller, Services and Repository
+   - Services for Service like Sending Sms etc.
+   - JobRepository for Jobs Related Stuff.
+
+3. Introduces in Classes to split the code 
+
+## Refactoring Approach
+
+In the process of refactoring, here's the general approach I would follow:
+
+1. **Code Structure and Separation of Concerns**:
+   - Describe how you would refactor the code to improve its structure and maintainability.
+   - Discuss any potential design patterns or architectural changes that could be applied.
+
+2. **Dependency Injection**:
+   - Explain how you would introduce dependency injection to decouple components and improve testability.
+   - Discuss whether constructor injection or method injection would be more suitable for the codebase.
+
+3. **Unit Testing**:
+   - Share your plans for writing unit tests to ensure the refactored code behaves as expected.
+   - Discuss which parts of the codebase you would prioritize for testing and how you would isolate dependencies.
+
+4. **Code Formatting and Style**:
+   - Discuss the importance of consistent code formatting and adherence to coding standards.
+   - Share your thoughts on naming conventions, code readability, and best practices.
+5. The Code Still Need To be Refctore Becaue there is alot of more stuff in the code to avoid duplications
